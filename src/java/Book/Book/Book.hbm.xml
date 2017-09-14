@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="Book.Book.Book" table="book">
+      <cache usage="read-write"/>  <!--可根据情况设为read-only等值-->
+      <id name="bookid">
+          <generator class="native"/>
+      </id>
+      <property name="bookname"/>
+      <property name="author"/>
+      <property name="price"/>
+      <property name="category"/>
+  </class>
+</hibernate-mapping>

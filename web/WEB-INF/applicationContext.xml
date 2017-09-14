@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- was: <?xml version='1.0' encoding='UTF-8' ?> -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
+
+    <aop:aspectj-autoproxy/>
+    <context:component-scan base-package="User.*"/>
+    
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+          p:location="/WEB-INF/dataSource.properties"  />
+
+<bean id="dataSource"
+    class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+    p:driverClassName="${dataSource.driverClassName}"
+    p:url="${dataSource.url}"
+    p:username="${dataSource.username}"
+    p:password="${dataSource.password}" />
+    
+    
+    <!-- ADD PERSISTENCE SUPPORT HERE (jpa, hibernate, etc) -->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!--property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+            </props>
+        </property-->
+        <property name="hibernateProperties">
+        <props>
+            <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+            <prop key="hibernate.show_sql">true</prop>
+            <prop key="hibernate.format_sql">true</prop> 
+            <!-- 缓存配置 -->
+            <prop key="hibernate.cache.use_query_cache">true</prop><!-- 开启缓存 -->
+            <prop key="hibernate.cache.use_second_level_cache">true</prop><!-- 开启二级缓存 -->
+            <!-- hibernate3 二级缓存提供类
+            <prop key="hibernate.cache.provider_class">
+            com.googlecode.hibernate.memcached.MemcachedCacheProvider
+            </prop>
+            -->
+            <!-- hibernate4 二级缓存提供类-->
+            <prop key="hibernate.cache.region.factory_class">
+                com.googlecode.hibernate.memcached.MemcachedRegionFactory
+            </prop>
+            <prop key="hibernate.cache.use_structured_entries">true</prop><!-- 结构化存储 -->
+            <prop key="hibernate.max_fetch_depth">3</prop>
+            <prop key="hibernate.memcached.servers">localhost:11211</prop><!-- 二级缓存服务器位置和端口 -->
+
+            <!-- 二级缓存前缀名称，很多文章都是ehcache，我测试改成 memcache也没问题-->
+            <prop key="hibernate.cache.region_prefix">quality.cache.ehcache</prop>
+            <prop key="hibernate.memcached.operationTimeout">5000</prop><!-- 操作超时时间，单位ms -->
+            <prop key="hibernate.memcached.cacheTimeSeconds">20</prop><!-- 缓存失效时间，单位秒 -->
+        </props>
+    </property>
+        <property name="mappingResources">
+            <list>
+                <value>User/User/User.hbm.xml</value>
+                <value>Book/Book/Book.hbm.xml</value>
+                <value>ShoppingCart/ShoppingCart/ShoppingCart.hbm.xml</value>
+                <value>Order/Order/Order.hbm.xml</value>
+            </list>
+        </property>
+    </bean>
+    
+    <!--<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>-->
+    
+    
+    <bean id="MyloginModule" class="Jaas.MyLoginModule">
+        <property name="userdao" ref="UserDao"/>
+    </bean>
+    <bean id="SimpleCallbackHandler" class="Jaas.SimpleCallbackHandler"/>
+    <bean id="SimplePrincipal" class="Jaas.SimplePrincipal"/>
+    <!-- Entity Beans -->
+    <bean id="User" class="User.User.User" scope="prototype"/>
+    <bean id="Book" class="Book.Book.Book"/>
+    
+    <bean id="ShoppingCart" class="ShoppingCart.ShoppingCart.ShoppingCart"/>
+    <bean id="Order" class="Order.Order.Order"/>
+    
+    <!-- Dao Beans -->
+    <bean id="UserDao" class="User.UserDao">
+        <property name="factory" ref="sessionFactory"/>
+    </bean>
+    <bean id="BookDao" class="Book.BookDao">
+        <property name="factory" ref="sessionFactory"/>
+    </bean>
+    
+    <bean id="ShoppingCartDao" class="ShoppingCart.ShoppingCartDao">
+        <property name="factory" ref="sessionFactory"/>
+    </bean>
+    <bean id="OrderDao" class="Order.OrderDao">
+        <property name="factory" ref="sessionFactory"/>
+    </bean>
+    
+    <!-- Service Beans -->
+    <bean id="UserService" class="User.UserService">
+        <property name="dao" ref="UserDao"/>
+    </bean>
+    <bean id="BookService" class="Book.BookService">
+        <property name="dao" ref="BookDao"/>
+    </bean>
+    
+    <bean id="ShoppingCartService" class="ShoppingCart.ShoppingCartService">
+        <property name="dao" ref="ShoppingCartDao"/>
+    </bean>
+    <bean id="OrderService" class="Order.OrderService">
+        <property name="dao" ref="OrderDao"/>
+        <property name="shoppingcartdao" ref="ShoppingCartDao"/>
+    </bean>
+    
+    <!-- Action Beans -->
+    <bean id="UserAction" class="User.UserAction">
+        <property name="service" ref="UserService"/>
+        <property name="user" ref="User"/>
+        <aop:scoped-proxy/>
+    </bean>
+    <bean id="BookAction" class="Book.BookAction">
+        <property name="service" ref="BookService"/>
+        <property name="userservice" ref="UserService"/>
+        <property name="factory" ref="sessionFactory"/>
+        <aop:scoped-proxy/>
+    </bean>
+    
+    <bean id="ShoppingCartAction" class="ShoppingCart.ShoppingCartAction">
+        <property name="service" ref="ShoppingCartService"/>
+    </bean>
+    <bean id="OrderAction" class="Order.OrderAction">
+        <property name="service" ref="OrderService"/>
+        <property name="queuesender" ref="JmsQueueSender"/>
+        <property name="destination" ref="queueDestination"/>
+    </bean>
+    
+    
+    <bean id="targetConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="tcp://localhost:61616"/>
+        <property name="trustAllPackages" value="true"/>
+    </bean>
+    <bean id="connectionFactory" class="org.springframework.jms.connection.SingleConnectionFactory">
+        <property name="targetConnectionFactory" ref="targetConnectionFactory"/>
+    </bean>
+    <bean id="queueDestination" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg>
+            <value>queue</value>
+        </constructor-arg>
+    </bean>
+    <bean id="JmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="defaultDestination" ref="queueDestination"/>
+    </bean>
+    <bean id="JmsQueueSender" class="JMS.QueueSender">
+        <property name="jmstemplate" ref="JmsTemplate"/>
+    </bean>
+    <bean id="JmsQueueReceiver" class="JMS.QueueReceiver">
+        <property name="service" ref="OrderService"/>
+    </bean>
+    <bean id="JmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="destination" ref="queueDestination"/>
+        <property name="messageListener" ref="JmsQueueReceiver"/>
+    </bean>
+    
+    <bean id="IWebservice" class="User.WebService.webservice">
+        <property name="service" ref="BookService" />
+    </bean>
+    <bean id="IWebservice2" class="User.WebService.webservice2"> <!--具体实现-->
+    </bean>
+    <jaxws:endpoint id="web_service" implementor="User.WebService.webservice" address="/Soap.soap"></jaxws:endpoint>
+    
+    
+      
+       <!--jaxrs:server id="rest_service" address="/Rest.rest">
+         <jaxrs:serviceBeans>
+             <ref bean="IWebservice2" />
+         </jaxrs:serviceBeans>
+     </jaxrs:server-->  
+       
+</beans>

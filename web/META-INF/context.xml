@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/BookStore">
+
+<Realm appName="Login1" 
+       className="org.apache.catalina.realm.JAASRealm" 
+       roleClassNames="Jaas.SimplePrincipal" 
+       userClassNames="Jaas.UserPrincipal"/>
+
+</Context>

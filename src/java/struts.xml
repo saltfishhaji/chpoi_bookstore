@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+"http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+    <!-- Configuration for the default package. -->
+    <package name="default" extends="struts-default">
+
+        <!-- User Register -->
+        <action name="Register" class="UserAction" method="UserRegister">
+            <result name="success">/WEB-INF/index.jsp</result>
+            <result name="error">/WEB-INF/User/UserRegister.jsp</result>
+        </action>
+        
+        <!-- User Login -->
+        <action name="User_Login" class="UserAction" method="User_Login">
+            <result name="success">/WEB-INF/index.jsp</result>
+            <result name="error">/WEB-INF/User/UserLogin.jsp</result>
+        </action>
+        
+        <action name="Manager_Login" class="UserAction" method="Manager_Login">
+            <result name="success">/WEB-INF/Manager/ManagerMain.jsp</result>
+            <result name="error">/WEB-INF/User/UserLogin.jsp</result>
+        </action>
+        
+        <action name="Set_English" class="UserAction" method="Set_English">
+            <result name="success">/WEB-INF/index.jsp</result>
+        </action>
+        
+        <action name="Set_Chinese" class="UserAction" method="Set_Chinese">
+            <result name="success">/WEB-INF/index.jsp</result>
+        </action>
+        
+        <!-- Jump To Actions -->
+        <action name="Jump_UserLogin" class="UserAction" method="Jump_UserLogin">
+            <result name="success">/WEB-INF/User/UserLogin.jsp</result>
+        </action>
+        
+        <action name="Jump_UserRegister" class="UserAction" method="Jump_UserRegister">
+            <result name="success">/WEB-INF/User/UserRegister.jsp</result>
+        </action>
+        
+         <action name="Jump_Index" class="UserAction" method="Jump_Index">
+            <result name="success">/WEB-INF/index.jsp</result>
+        </action>
+        
+        
+         <action name="Jump_Chatroom" class="UserAction" method="Jump_Chatroom">
+            <result name="success">/WEB-INF/User/Chatroom.jsp</result>
+        </action>
+
+        
+        <action name="Jump_Home" class="UserAction" method="Jump_Home">
+            <result name="success">/WEB-INF/index.jsp</result>
+        </action>
+        
+        <action name="Jump_BookAffair" class="UserAction" method="Jump_BookAffair">
+            <result name="success">/WEB-INF/Manager/BookAffair.jsp</result>
+        </action>
+        
+        <action name="Jump_UserAffair" class="UserAction" method="Jump_UserAffair">
+            <result name="success">/WEB-INF/Manager/UserAffair.jsp</result>
+        </action>
+        
+        <action name="Jump_Manager" class="UserAction" method="Jump_Manager">
+            <result name="success">/WEB-INF/Manager/ManagerMain.jsp</result>
+        </action>
+        
+        
+        <action name="Jump_Books" class="BookAction" method="Jump_Books">
+            <result name="success">/WEB-INF/BookStore/Books.jsp</result>
+            <result name="login">/WEB-INF/User/UserLogin.jsp</result>
+        </action>
+        
+        <action name="Jump_ShoppingCart" class="ShoppingCartAction" method="Jump_ShoppingCart">
+            <result name="success">/WEB-INF/BookStore/Carts.jsp</result>
+        </action>
+        
+        <action name="Jump_Order" class="OrderAction" method="Jump_Order">
+            <result name="success">/WEB-INF/BookStore/Orders.jsp</result>
+        </action>
+        
+        <!-- Add Book -->
+        <action name="Add_Book" class="BookAction" method="Add_Book">
+            <result name="success">/WEB-INF/Manager/BookAffair.jsp</result>
+            <result name="error">/WEB-INF/Manager/BookAffair.jsp?cond=error</result>
+        </action>
+        
+                <!-- Delete Book -->
+        <action name="Delete_Book" class="BookAction" method="Delete_Book">
+            <result name="success">/WEB-INF/Manager/BookAffair.jsp</result>
+            <result name="error">/WEB-INF/Manager/BookAffair.jsp?cond=error</result>
+        </action>
+        
+        <!-- Search Book -->
+        <action name="Search_Books" class="BookAction" method="Search_Books">
+            <result name="manager">/WEB-INF/Manager/BookAffair.jsp</result>
+            <result name="user">/WEB-INF/BookStore/Books.jsp</result>
+        </action>
+        
+        <action name="lucene" class="BookAction" method="search">
+            <result name="success">/WEB-INF/BookStore/Books.jsp</result>
+        </action>
+        
+        <action name="Search_Books_Ajax" class="BookAction" method="SearchBooksAjax"> 
+        </action>
+                
+        <action name="Queue_Sender" class="OrderAction" method="queueSender">
+        </action>
+        
+        <action name="Search_Users" class="UserAction" method="Search_Users">
+            <result name="success">/WEB-INF/Manager/UserAffair.jsp</result>
+        </action>
+        
+        <action name="update_Cart" class="ShoppingCartAction" method="update_Cart">
+            <result name="success">/WEB-INF/BookStore/Books.jsp</result>
+        </action>
+        
+        <action name="update_Order" class="OrderAction" method="update_Order">
+            <result name="success">/WEB-INF/BookStore/Books.jsp</result>
+        </action>
+        
+        <action name="Jump_Test" class="OrderAction" method="JumpTest">
+            <result name="success">/WEB-INF/test.jsp</result>
+        </action>        
+        <action name="web_service/*">
+            <result>web_service/*.soap</result>
+        </action>
+    </package>
+    
+    <constant name="struts.action.excludePattern" value="/chatroom"></constant>
+</struts>

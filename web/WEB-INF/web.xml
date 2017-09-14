@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/applicationContext.xml, classpath:User/WebService/cxf.xml</param-value>
+    </context-param>
+    <filter>
+        <filter-name>struts2</filter-name>
+        <filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>    
+    </filter>
+    <filter-mapping>
+        <filter-name>struts2</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter>
+          <filter-name>encodingFilter</filter-name>
+          <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+          <init-param>
+          <param-name>encoding</param-name>
+          <param-value>utf-8</param-value>
+          </init-param>
+     </filter>
+     <filter-mapping>
+          <filter-name>encodingFilter</filter-name>
+         <url-pattern>/*</url-pattern>
+     </filter-mapping>
+    
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <!--<servlet>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>*.htm</url-pattern>
+    </servlet-mapping>-->
+    <servlet>
+        <servlet-name>CXFServlet</servlet-name>
+        <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CXFServlet</servlet-name>
+        <url-pattern>/web_service/*</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>
+            0
+        </session-timeout>
+    </session-config>
+    <welcome-file-list>
+        <welcome-file>/WEB-INF/index.jsp</welcome-file>
+    </welcome-file-list>
+    <ejb-local-ref>
+        <ejb-ref-name>userService</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <ejb-link>#UserService</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>shoppingcartService</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <ejb-link>#ShoppingCartService</ejb-link>
+    </ejb-local-ref>
+    
+    
+    
+    <security-constraint>
+	<!-- Authorization setting for SSL -->
+	<web-resource-collection>
+	    <web-resource-name>OPENSSL</web-resource-name>
+        <url-pattern>/User_Login</url-pattern>
+        <url-pattern>/Manager_Login</url-pattern>
+        <url-pattern>/Jump_UserLogin</url-pattern>
+        <url-pattern>/Jump_Index</url-pattern>
+	</web-resource-collection>
+	<user-data-constraint>
+	    <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+	</user-data-constraint>
+   </security-constraint>
+
+    <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Bookstore</web-resource-name>
+      <url-pattern>/Manager/*</url-pattern>
+    </web-resource-collection>
+
+    <auth-constraint>
+      <role-name>manager</role-name>
+    </auth-constraint>
+  </security-constraint>
+
+  <security-role>
+    <role-name>manager</role-name>
+  </security-role>
+  
+  <login-config>
+    <!--auth-method>BASIC</auth-method-->
+    <auth-method>FORM</auth-method>
+    <form-login-config>
+        <form-login-page>/WEB-INF/User/UserLogin.jsp</form-login-page>
+        <form-error-page>/WEB-INF/User/UserLogin.jsp</form-error-page>
+    </form-login-config>
+    <!--realm-name>Manager</realm-name-->
+  </login-config>
+  
+</web-app>
+
